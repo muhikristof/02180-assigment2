@@ -1,22 +1,19 @@
+from knowledge_base import KnowledgeBase, Belief
+from sympy import sympify
+
+
 def main():
     # Create a new knowledge base
-    kb = KB()
+    kb = KnowledgeBase()
 
     # Add some sentences to the knowledge base
-    kb.tell(expr("==> (& A B) C"))
-    kb.tell(expr("& A B"))
-    kb.tell(expr("==> C D"))
-
-    # Print the knowledge base
-    print(kb)
+    kb.tell(Belief("A & B & C & Not(D)", 1))
 
     # Ask some queries
-    print(kb.ask(expr("C")))  # True
-    print(kb.ask(expr("D")))  # True
-    print(kb.ask(expr("A")))  # False
-    print(kb.ask(expr("B")))  # False
-    print(kb.ask(expr("E")))  # False
-    print()
+    print(kb.ask("A"))  # True
+    print(kb.ask("B"))  # True
+    print(kb.ask("A >> D"))  # False
+
 
 if __name__ == "__main__":
     main()

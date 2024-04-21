@@ -1,4 +1,10 @@
 from sympy.logic.boolalg import Or, And
+import random
+
+
+def prob(p) -> bool:
+    """Return True with probability p."""
+    return random.uniform(0, 1) < p
 
 
 def disjuncts(expr):
