@@ -108,7 +108,7 @@ class KnowledgeBase:
             Decimal: Maximum degree of belief in the knowledge base that entails the given expression.
         """
         expr_cnf = to_cnf(expr)
-        if expr_cnf or self.entails([], expr_cnf):
+        if self.entails([], expr_cnf):
             return Decimal(1)
 
         local_kb = []
