@@ -2,7 +2,7 @@ import random
 from typing import Dict, List
 
 from sympy import Symbol
-from sympy.logic.boolalg import BooleanFunction
+from sympy.logic.boolalg import BooleanFunction, is_cnf
 import utils
 
 
@@ -19,6 +19,8 @@ class Solver:
     ) -> Dict[Symbol, bool] | None:
         """Checks for satisfiability of the given clauses using WalkSAT algorithm.
 
+        @Warning: Clauses must be in CNF!
+
         Parameters:
             clauses (List[BooleanFunction]): The list of clauses to be checked for satisfiability.
             p (float): The probability of choosing a random symbol.
@@ -30,6 +32,10 @@ class Solver:
         >>> Solver.__solve_walk_sat([A & B & Not(C)])
         {A: True, B: True, C: False}
         """
+
+        # Check if the clauses are all in CNF
+        if not all(is_cnf(clause) for clause in clauses):
+            raise ValueError("Clauses must be in CNF!")
 
         # Get all the symbols in the clauses
         symbols = set().union(*[clause.free_symbols for clause in clauses])

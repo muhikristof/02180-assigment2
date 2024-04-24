@@ -12,7 +12,7 @@ from sympy.logic.boolalg import BooleanFunction, Not, Or
 
 
 class Belief:
-    """A class to represent a belief in the knowledge base.
+    """A class to represent a belief in the knowledge base. Each belief is a pair (expr, order), where expr is a Boolean function and order (entrenchment) is a number between 0 and 1. Every belief converts underlying expression to CNF.
 
     Attributes:
         expr (BooleanFunction): The expression representing the belief.
@@ -128,14 +128,13 @@ class KnowledgeBase:
         Returns:
             Decimal: Maximum degree of belief in the knowledge base that entails the given expression.
         """
-        expr_cnf = to_cnf(expr)
-        if expr_cnf or self.entails([], expr_cnf):
+        if self.entails([], expr):
             return Decimal(1)
 
         local_kb = []
         for order, beliefs in groupby(self.beliefs, key=lambda b: b.order):
             local_kb += [b.expr for b in beliefs]
-            if self.entails(local_kb, expr_cnf):
+            if self.entails(local_kb, expr):
                 return order
 
         return Decimal(0)
@@ -182,7 +181,7 @@ class KnowledgeBase:
         return [b.expr for b in self.beliefs]
 
     @staticmethod
-    def entails(kb: List[BooleanFunction], expr: BooleanFunction | str) -> bool:
+    def entails(kb: List[BooleanFunction], expr: BooleanFunction | str | bool) -> bool:
         """Checks if the given expression is entailed by the knowledge base using the semantic deduction theorem:
         φ ⊨ ψ, iff φ → ψ is a tautology. In other words, φ ⊨ ψ iff the sentence (φ ∧ ¬ψ) is unsatisfiable.
 
