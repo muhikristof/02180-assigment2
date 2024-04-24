@@ -5,9 +5,10 @@ import heapq
 from itertools import groupby
 from typing import List
 from solver import Solver
+from utils import associate
 
 from sympy import Equivalent, to_cnf
-from sympy.logic.boolalg import BooleanFunction, Not
+from sympy.logic.boolalg import BooleanFunction, Not, Or
 
 
 class Belief:
@@ -83,7 +84,7 @@ class KnowledgeBase:
         """
         heapq.heappush(self.beliefs, belief)
 
-    def revise(self, belief: Belief):
+    def revise(self, new_belief: Belief):
         """Revises the knowledge base by retracting any belief that is inconsistent with the new belief and expanding the knowledge base with the new belief.
 
         Revision is implemented using Levi's identity: B ⋆ φ = (B ÷ ¬φ) + φ.
@@ -91,11 +92,31 @@ class KnowledgeBase:
         Parameters:
             belief (Belief): The belief to be added to the knowledge base.
         """
-        pass
+        expr_degree = self.max_degree(new_belief.expr)
 
-    def retract(self, belief: Belief):
+        if self.ask(Not(new_belief.expr)):
+            raise ValueError("Contradictory beliefs.")
+
+        # If new_belief is a tautology, then 1
+        if self.entails([], new_belief.expr):
+            new_belief.order = Decimal(1)
+        elif new_belief.order <= expr_degree:
+            self.retract(new_belief)
+        else:
+            self.retract(~new_belief.expr, Decimal(0))
+            self.expand(new_belief)
+
+        self.tell(new_belief)
+
+    def retract(self, belief_to_retract: Belief):
         """Retracts a belief from the knowledge base."""
-        pass
+        for kb_belief in filter(lambda b: belief_to_retract.cmp_ge(b), self.beliefs):
+            impl_degree = self.max_degree(belief_to_retract.expr)
+            xory = associate(Or, [belief_to_retract.expr, kb_belief.expr])
+            degree_xory = self.max_degree(xory)
+            if impl_degree == degree_xory:
+                kb_belief.order = belief_to_retract.order
+        heapq.heapify(self.beliefs)
 
     def max_degree(self, expr: BooleanFunction | bool) -> Decimal:
         """Finds such a maximum degree of belief in the knowledge base that for all

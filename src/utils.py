@@ -37,11 +37,21 @@ def dissociate(op, expr):
     result = []
 
     def collect(subexpr):
-        if subexpr.func == op:
-            for arg in subexpr.args:
+        for arg in subexpr:
+            if isinstance(arg, op):
                 collect(arg)
         else:
             result.append(subexpr)
 
     collect(expr)
     return result
+
+
+def associate(op, expr):
+    expr = dissociate(op, expr)
+    if len(expr) == 0:
+        return op.identity
+    elif len(expr) == 1:
+        return expr[0]
+    else:
+        return op(*expr)
