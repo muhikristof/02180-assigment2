@@ -11,19 +11,19 @@ from src.solver import Solver
 
 class TestUtils(unittest.TestCase):
     def test_solve_walk_sat_1(self):
-        model = Solver.solve([sympify("A & B & Not(C)")])
+        model = Solver.solve([to_cnf("A & B & Not(C)")])
         self.assertEqual(
             model, {sympify("A"): True, sympify("B"): True, sympify("C"): False}
         )
 
     def test_solve_walk_sat_2(self):
-        model = Solver.solve([sympify("A & B & C")])
+        model = Solver.solve([to_cnf("A & B & C")])
         self.assertEqual(
             model, {sympify("A"): True, sympify("B"): True, sympify("C"): True}
         )
 
     def test_solve_walk_sat_3(self):
-        model = Solver.solve([sympify("A >> B")])
+        model = Solver.solve([to_cnf("A >> B")])
         self.assertIn(
             model,
             [
@@ -34,7 +34,7 @@ class TestUtils(unittest.TestCase):
         )
 
     def test_solve_walk_sat_4(self):
-        model = Solver.solve([sympify("Not(A) & A")])
+        model = Solver.solve([to_cnf("Not(A) & A")])
         self.assertEqual(model, None)
 
 

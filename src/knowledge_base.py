@@ -11,7 +11,7 @@ from sympy.logic.boolalg import BooleanFunction, Not
 
 
 class Belief:
-    """A class to represent a belief in the knowledge base.
+    """A class to represent a belief in the knowledge base. Each belief is a pair (expr, order), where expr is a Boolean function and order (entrenchment) is a number between 0 and 1. Every belief converts underlying expression to CNF.
 
     Attributes:
         expr (BooleanFunction): The expression representing the belief.
