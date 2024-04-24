@@ -23,6 +23,9 @@ def main():
     print(kb.ask("A"))  # True
     print(kb.ask("B"))  # True
     print(kb.ask("A >> D"))  # False
+    print(kb.ask("Not(A)"))  # False
+    print(kb.ask("F & Not(F)"))  # False
+    print(kb.ask("F | Not(F)"))  # True
 
 
 if __name__ == "__main__":

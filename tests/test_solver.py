@@ -24,9 +24,18 @@ class TestUtils(unittest.TestCase):
 
     def test_solve_walk_sat_3(self):
         model = Solver.solve([sympify("A >> B")])
-        self.assertEqual(
-            model, {sympify("A"): True, sympify("B"): True, sympify("C"): True}
+        self.assertIn(
+            model,
+            [
+                {sympify("A"): False, sympify("B"): False},
+                {sympify("A"): False, sympify("B"): True},
+                {sympify("A"): True, sympify("B"): True},
+            ],
         )
+
+    def test_solve_walk_sat_4(self):
+        model = Solver.solve([sympify("Not(A) & A")])
+        self.assertEqual(model, None)
 
 
 if __name__ == "__main__":
