@@ -35,10 +35,8 @@ def dissociate(op, expr):
     [A, B, C]
     """
     result = []
-    print(f"Dissociating expression: {expr} using operator: {op}")
 
     def collect(subexpr):
-        print(f"Collecting sub-expression: {subexpr}")
         if isinstance(subexpr, op):
             for arg in subexpr.args:  # access the arguments of the operator
                 collect(arg)
@@ -48,18 +46,15 @@ def dissociate(op, expr):
     if isinstance(expr, str):
         expr = to_cnf(expr)  # Convert string expressions to CNF
     collect(expr)
-    print(f"Final dissociated result: {result}")
     return result
 
 
 def associate(op, expr_list):
     """Rebuild an expression from a list of sub-expressions using a specified operator    """
-    print(f"Associating list of expressions: {expr_list} with operator: {op}")
     if not expr_list:
         return op.identity
     elif len(expr_list) == 1:
         return expr_list[0]
     else:
         combined_expr = op(*expr_list)  # Rebuild the expression using the operator
-        print(f"Combined expression: {combined_expr}")
         return combined_expr

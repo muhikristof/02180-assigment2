@@ -118,6 +118,11 @@ class KnowledgeBase:
                 kb_belief.order = belief_to_retract.order
         heapq.heapify(self.beliefs)
 
+    def retract2(self, belief_to_retract: Belief):  # TODO: Use in revise too?
+        """Actually deletes the belief from the knowledge"""
+        self.beliefs = [b for b in self.beliefs if not (b.expr == belief_to_retract.expr and b.order == belief_to_retract.order)]
+        heapq.heapify(self.beliefs)
+
     def max_degree(self, expr: BooleanFunction | bool) -> Decimal:
         """Finds such a maximum degree of belief in the knowledge base that for all
         beliefs with the same or higher degree of belief, the given expression is entailed.
