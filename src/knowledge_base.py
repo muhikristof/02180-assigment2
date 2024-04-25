@@ -143,7 +143,7 @@ class KnowledgeBase:
         """Expands the knowledge base with the new belief."""
 
         if self.ask(Not(new_belief.expr)):
-            raise ValueError("Contradictory beliefs.")
+            raise ValueError("Contradictory beliefs.")  # TODO: Could make it skip the expansion if contradictory instead of stopping the whole script
 
         # For tautological beliefs, set order to 1
         if self.entails([], new_belief.expr):
