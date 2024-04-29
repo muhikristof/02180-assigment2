@@ -94,21 +94,26 @@ class KnowledgeBase:
         """
         expr_degree = self.max_degree(new_belief.expr)
 
+        expr_degree = self.max_degree(new_belief.expr)
+
         if self.ask(Not(new_belief.expr)):
             raise ValueError("Contradictory beliefs.")
 
         # If new_belief is a tautology, then 1
         if self.entails([], new_belief.expr):
             new_belief.order = Decimal(1)
+            self.reorder(new_belief)
         elif new_belief.order <= expr_degree:
+            self.reorder(new_belief)
             self.retract(new_belief)
+            self.expand(new_belief)
         else:
-            self.retract(~new_belief.expr, Decimal(0))
+            self.reorder(~new_belief.expr, Decimal(0))
             self.expand(new_belief)
 
         self.tell(new_belief)
 
-    def retract(self, belief_to_retract: Belief):
+    def reorder(self, belief_to_retract: Belief):
         """Retracts a belief from the knowledge base."""
         for kb_belief in filter(lambda b: belief_to_retract.cmp_ge(b), self.beliefs):
             impl_degree = self.max_degree(belief_to_retract.expr)
@@ -118,8 +123,8 @@ class KnowledgeBase:
                 kb_belief.order = belief_to_retract.order
         heapq.heapify(self.beliefs)
 
-    def retract2(self, belief_to_retract: Belief):  # TODO: Use in revise too?
-        """Actually deletes the belief from the knowledge"""
+    def retract(self, belief_to_retract: Belief):
+        """Deletes the belief from the knowledge"""
         self.beliefs = [b for b in self.beliefs if not (b.expr == belief_to_retract.expr and b.order == belief_to_retract.order)]
         heapq.heapify(self.beliefs)
 
@@ -148,7 +153,7 @@ class KnowledgeBase:
         """Expands the knowledge base with the new belief."""
 
         if self.ask(Not(new_belief.expr)):
-            raise ValueError("Contradictory beliefs.")  # TODO: Could make it skip the expansion if contradictory instead of stopping the whole script
+            raise ValueError("Contradictory beliefs.")
 
         # For tautological beliefs, set order to 1
         if self.entails([], new_belief.expr):

@@ -15,7 +15,7 @@ def main():
     kb.expand(Belief("A | F", "0.4"))
     kb.expand(Belief("D >> A", "0.4"))
     print(kb)
-    kb.retract2(Belief("A & B & C", 1.0))
+    kb.retract(Belief("A & B & C", 1.0))
     print(kb)
 
     kb.expand(Belief("B & (C >> (A | D)) >> Not(D) >> Not(D)", "0.7"))
