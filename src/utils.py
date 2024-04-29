@@ -1,4 +1,4 @@
-from sympy.logic.boolalg import Or, And
+from sympy.logic.boolalg import Or, And, to_cnf
 import random
 
 
@@ -37,11 +37,24 @@ def dissociate(op, expr):
     result = []
 
     def collect(subexpr):
-        if subexpr.func == op:
-            for arg in subexpr.args:
+        if isinstance(subexpr, op):
+            for arg in subexpr.args:  # access the arguments of the operator
                 collect(arg)
         else:
             result.append(subexpr)
 
+    if isinstance(expr, str):
+        expr = to_cnf(expr)  # Convert string expressions to CNF
     collect(expr)
     return result
+
+
+def associate(op, expr_list):
+    """Rebuild an expression from a list of sub-expressions using a specified operator    """
+    if not expr_list:
+        return op.identity
+    elif len(expr_list) == 1:
+        return expr_list[0]
+    else:
+        combined_expr = op(*expr_list)  # Rebuild the expression using the operator
+        return combined_expr
